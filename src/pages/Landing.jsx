@@ -158,10 +158,10 @@ function Landing() {
             SUPPORT THE MISSION
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            EVERY TOOL IS FREE. NO ACCOUNT. NO PAYWALL.
+            EVERY TOOL IS FREE. NO ACCOUNT. NO PAYWALL ON KNOWING YOUR RIGHTS.
           </p>
           <p className="text-muted-foreground mb-12">
-            We believe consumer protection is a human right — not a product. Every tool, report and letter here is free to use. There are currently no payment options; if you would like to support the project, see the source repository.
+            Every scanner, report and letter here is free to use, forever — consumer protection is a right, not a product. The only optional payment is a one-time <span className="text-gold">Certified Case File</span>: a sealed, print-ready dossier for anyone who wants a finished document to send. It buys preparation and integrity, never an outcome.
           </p>
         </div>
       </section>
