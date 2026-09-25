@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Shield, ChevronRight, Zap, Search, Lock, FileText, Briefcase, DollarSign, ArrowRight, Github, Users, TrendingUp, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -16,7 +16,7 @@ const shields = [
     icon: Search,
     number: '02',
     title: 'THERAPEUTIC TRANSPARENCY PORTAL',
-    description: 'Search 100+ medications. Expose brand vs generic price gaps. Save thousands.',
+    description: 'Compare brand vs generic medication pricing. Demonstration dataset — real prices must be verified with your pharmacist.',
     path: '/pharma-search'
   },
   {
@@ -54,32 +54,13 @@ const shields = [
 ]
 
 const stats = [
-  { value: '6', label: 'SOVEREIGN SHIELDS' },
-  { value: '100+', label: 'MEDICATIONS INDEXED' },
-  { value: '100%', label: 'FREE FOREVER' },
-  { value: '0', label: 'PAYWALLS' }
+  { value: '6', label: 'PROTECTION SHIELDS' },
+  { value: 'ACL ss.23-28', label: 'LAW-BASED CHECKS' },
+  { value: 'FREE', label: 'EVERY TOOL' },
+  { value: 'OPEN', label: 'SOURCE' }
 ]
 
 function Landing() {
-  const [counts, setCounts] = useState(stats.map(() => 0))
-
-  useEffect(() => {
-    const targets = [6, 100, 100, 0]
-    const duration = 2000
-    const steps = 60
-    const interval = duration / steps
-
-    let step = 0
-    const timer = setInterval(() => {
-      step++
-      const progress = step / steps
-      setCounts(targets.map(target => Math.round(target * progress)))
-      if (step >= steps) clearInterval(timer)
-    }, interval)
-
-    return () => clearInterval(timer)
-  }, [])
-
   return (
     <div className="bg-grid">
       {/* Hero Section */}
@@ -87,7 +68,7 @@ function Landing() {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-gold/10 border border-gold/20 rounded-full px-4 py-2 mb-8">
             <span className="w-2 h-2 bg-gold rounded-full animate-pulse"></span>
-            <span className="text-gold text-xs tracking-widest font-heading">100% FREE · OPEN SOURCE · SCP-1 PROTOCOL</span>
+            <span className="text-gold text-xs tracking-widest font-heading">FREE · OPEN SOURCE · VERIFIABLE</span>
           </div>
 
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 text-glow">
@@ -118,8 +99,8 @@ function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="font-heading text-3xl md:text-4xl font-bold text-gold mb-2">
-                  {stat.value === '100+' ? `${counts[i]}+` : counts[i]}
+                <div className="font-heading text-2xl md:text-3xl font-bold text-gold mb-2">
+                  {stat.value}
                 </div>
                 <div className="text-muted-foreground text-xs tracking-widest font-heading">{stat.label}</div>
               </div>
@@ -177,18 +158,11 @@ function Landing() {
             SUPPORT THE MISSION
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            EVERYTHING IS FREE. FOREVER.
+            EVERY TOOL IS FREE. NO ACCOUNT. NO PAYWALL.
           </p>
           <p className="text-muted-foreground mb-12">
-            We believe consumer protection is a human right — not a product. Every tool, every report, every letter is free with no limits. If our work helped you, consider a voluntary contribution to keep the shields powered.
+            We believe consumer protection is a human right — not a product. Every tool, report and letter here is free to use. There are currently no payment options; if you would like to support the project, see the source repository.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {[1, 5, 10, 25].map((amount) => (
-              <button key={amount} className="btn-secondary">
-                ${amount}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -196,10 +170,10 @@ function Landing() {
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
-            THE CONSUMER CANNOT BE FOOLED.
+            KNOW YOUR RIGHTS.
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            NOT EVER AGAIN.
+            CHECK EVERY WORD BEFORE YOU SIGN.
           </p>
           <Link to="/contract-auditor" className="btn-primary text-lg px-12 py-4">
             ACTIVATE YOUR FIRST SHIELD

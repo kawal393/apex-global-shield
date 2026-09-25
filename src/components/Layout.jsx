@@ -10,7 +10,7 @@ const navItems = [
   { label: 'LEASE SHIELD', path: '/lease-shield' },
   { label: 'EMPLOYMENT ARMOUR', path: '/employment-armour' },
   { label: 'FINANCE X-RAY', path: '/finance-xray' },
-  { label: 'TRIBUNAL', path: '/tribunal' },
+  { label: 'OVERSIGHT', path: '/oversight' },
   { label: 'MANIFESTO', path: '/manifesto' }
 ]
 
@@ -24,7 +24,7 @@ function Layout({ children }) {
       <div className="bg-gold/10 border-b border-gold/20 py-2 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-gold text-xs tracking-widest font-heading">
           <Scale className="w-3 h-3" />
-          <span>SOVEREIGN CONSUMER PROTECTION ENGINE — 100% FREE · OPEN SOURCE · SCP-1 PROTOCOL</span>
+          <span>CONSUMER PROTECTION ENGINE — FREE · OPEN SOURCE</span>
         </div>
       </div>
 
@@ -117,16 +117,14 @@ function Layout({ children }) {
               <h4 className="font-heading text-xs tracking-widest text-gold mb-4">RESOURCES</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link to="/manifesto" className="hover:text-gold transition-colors">Manifesto</Link></li>
-                <li><Link to="/tribunal" className="hover:text-gold transition-colors">High Tribunal</Link></li>
+                <li><Link to="/oversight" className="hover:text-gold transition-colors">Accuracy &amp; Oversight</Link></li>
                 <li><a href="https://github.com/kawal393/apex-shield-logic" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors flex items-center gap-1"><Github className="w-3 h-3" /> Source Code</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading text-xs tracking-widest text-gold mb-4">LEGAL</h4>
               <p className="text-muted-foreground text-xs">
-                ABN: 71 672 237 795 | ACN: 672 237 795
-                <br />
-                Apex Intelligence Empire
+                Operated by: [LEGAL ENTITY + ABN to be confirmed before publish]
                 <br />
                 Victoria, Australia
               </p>

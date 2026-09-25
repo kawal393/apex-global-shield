@@ -1,3 +1,5 @@
+// DEMONSTRATION DATA ONLY - invented sample values. NOT real ARTG numbers, PBS codes or prices.
+// Replace with a verified TGA/PBS feed before treating any figure here as reference data.
 export const top100Drugs = [
   {
     brandName: "Lipitor",

@@ -23,7 +23,7 @@ function App() {
           <Route path="/lease-shield" element={<LeaseShield />} />
           <Route path="/employment-armour" element={<EmploymentArmour />} />
           <Route path="/finance-xray" element={<FinanceXRay />} />
-          <Route path="/tribunal" element={<Tribunal />} />
+          <Route path="/oversight" element={<Tribunal />} />
           <Route path="/manifesto" element={<Manifesto />} />
         </Routes>
       </Layout>

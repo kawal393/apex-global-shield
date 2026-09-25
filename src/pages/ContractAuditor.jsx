@@ -78,7 +78,7 @@ function ContractAuditor() {
       setScanStage((prev) => (prev >= scanStages.length - 1 ? prev : prev + 1))
     }, 800)
 
-    // Simulate AI analysis with pattern matching
+    // Pattern-match the pasted text against known unfair-clause signatures (client-side only, no external call)
     setTimeout(() => {
       const flaggedClauses = []
       
@@ -163,7 +163,7 @@ function ContractAuditor() {
           CONTRACT HEALTH AUDITOR
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Paste your service agreement below. Our AI engine will analyze every clause against Australian Consumer Law unfair contract term guidelines and generate a live fairness score.
+          Paste your service agreement below. The tool checks your text against Australian Consumer Law unfair-contract-term criteria (ACL ss.23-28) and returns the clauses it matched, with the reference for each.
           <span className="text-gold font-bold"> Completely free. Always.</span>
         </p>
       </div>
@@ -181,7 +181,7 @@ function ContractAuditor() {
           disabled={analyzing || !contractText}
           className="btn-primary w-full mt-4"
         >
-          {analyzing ? 'ANALYZING...' : 'ASSASSINATE PREDATORY CLAUSES'}
+          {analyzing ? 'ANALYZING...' : 'ANALYZE FOR UNFAIR CLAUSES'}
         </button>
       </div>
 
