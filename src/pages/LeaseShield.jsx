@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
 import { Lock, AlertTriangle, CheckCircle } from 'lucide-react'
+import CertifiedCaseFile from '../components/CertifiedCaseFile'
 
 const leaseClauses = [
   { id: 'break-fee', name: 'EXCESSIVE BREAK FEE', severity: 'high', patterns: [/break\s+fee/i, /lease\s+break\s+cost/i, /early\s+termination\s+penalty/i], aclRef: 'Residential Tenancies Act', reason: 'Break fees that exceed actual landlord losses may be unfair.', resolution: 'I request an itemized breakdown of actual losses caused by early termination.' },
   { id: 'bond-trap', name: 'BOND RETENTION TRAP', severity: 'high', patterns: [/bond\s+will\s+be\s+forfeited/i, /landlord\s+may\s+retain\s+the\s+bond/i, /non-?refundable\s+deposit/i], aclRef: 'Residential Tenancies Act', reason: 'Automatic bond forfeiture without proper assessment is unlawful.', resolution: 'Bond retention must follow statutory procedures and fair assessment.' },
   { id: 'inspection', name: 'UNREASONABLE INSPECTION', severity: 'medium', patterns: [/inspection\s+every/i, /landlord\s+may\s+enter/i, /without\s+notice/i], aclRef: 'Residential Tenancies Act', reason: 'Excessive inspection frequency or entry without notice breaches tenant rights.', resolution: 'I request reasonable inspection frequency with proper notice as required by law.' }
 ]
+
+const CASE_META = {
+  shieldTitle: 'LEASE',
+  lawLine: 'the applicable Residential Tenancies Act and Australian Consumer Law',
+  registerUrl: 'your state or territory fair-trading / tenancies body',
+  complaintIntro: 'I wish to lodge a complaint about unfair or unlawful terms in a residential tenancy or lease agreement, including excessive break fees, bond-retention traps and entry/inspection terms that breach tenancy law.'
+}
 
 function LeaseShield() {
   const [text, setText] = useState('')
@@ -15,8 +23,16 @@ function LeaseShield() {
   const handleAnalyze = () => {
     setAnalyzing(true)
     setTimeout(() => {
-      const flagged = leaseClauses.filter(clause => clause.patterns.some(p => p.test(text)))
-      setAnalysis({ flagged, score: Math.max(0, 100 - flagged.length * 25) })
+      const flagged = []
+      for (const clause of leaseClauses) {
+        for (const pattern of clause.patterns) {
+          if (pattern.test(text)) { const m = text.match(pattern); flagged.push({ ...clause, match: m ? m[0] : null }); break }
+        }
+      }
+      const highRiskCount = flagged.filter(c => c.severity === 'high').length
+      const mediumRisk = flagged.filter(c => c.severity === 'medium').length
+      const score = Math.max(0, 100 - (highRiskCount * 20) - (mediumRisk * 10))
+      setAnalysis({ flagged, score, highRiskCount, summary: `Found ${flagged.length} potentially unfair clause(s). Fairness score: ${score}/100.` })
       setAnalyzing(false)
     }, 3000)
   }
@@ -42,7 +58,7 @@ function LeaseShield() {
         <div className="space-y-6">
           <div className="card border-gold/30">
             <h3 className="font-heading text-sm tracking-widest text-gold mb-4">TENANCY ANALYSIS</h3>
-            <p className="text-muted-foreground mb-4">Found {analysis.flagged.length} potentially unfair clauses. Fairness score: {analysis.score}/100.</p>
+            <p className="text-muted-foreground mb-4">{analysis.summary}</p>
           </div>
           {analysis.flagged.map((clause, i) => (
             <div key={i} className="card">
@@ -55,6 +71,7 @@ function LeaseShield() {
               <p className="text-gold text-sm">{clause.resolution}</p>
             </div>
           ))}
+          <CertifiedCaseFile analysis={analysis} meta={CASE_META} />
         </div>
       )}
       <div className="mt-8 p-4 bg-card/50 border border-border rounded-sm">

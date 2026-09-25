@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
 import { Briefcase, AlertTriangle } from 'lucide-react'
+import CertifiedCaseFile from '../components/CertifiedCaseFile'
 
 const employmentClauses = [
   { id: 'non-compete', name: 'UNREASONABLE NON-COMPETE', severity: 'high', patterns: [/non-?compete/i, /restraint\s+of\s+trade/i, /shall\s+not\s+work\s+for/i], aclRef: 'Fair Work Act 2009', reason: 'Non-compete clauses that are too broad in scope or duration may be unenforceable.', resolution: 'I request the non-compete be limited to reasonable scope, duration, and geographic area.' },
   { id: 'ip-overreach', name: 'IP OWNERSHIP OVERREACH', severity: 'high', patterns: [/all\s+intellectual\s+property/i, /inventions\s+shall\s+belong\s+to/i, /work\s+product\s+belongs/i], aclRef: 'Fair Work Act 2009', reason: 'Claiming ownership of all IP including personal projects may be unreasonable.', resolution: 'I request IP ownership be limited to work directly related to employment duties during work hours.' },
   { id: 'unpaid-overtime', name: 'UNPAID OVERTIME REQUIREMENT', severity: 'medium', patterns: [/unpaid\s+overtime/i, /additional\s+hours\s+as\s+required/i, /no\s+overtime\s+payment/i], aclRef: 'Fair Work Act 2009 - NES', reason: 'Requiring unpaid overtime may breach the National Employment Standards.', resolution: 'I request clarification on overtime compensation in accordance with NES requirements.' }
 ]
+
+const CASE_META = {
+  shieldTitle: 'EMPLOYMENT',
+  lawLine: 'the Fair Work Act 2009 and the National Employment Standards',
+  registerUrl: 'fairwork.gov.au',
+  complaintIntro: 'I wish to lodge a complaint about unfair or unlawful terms in an employment or contractor agreement, including unreasonable restraint of trade, IP overreach and unpaid-overtime provisions that may breach the Fair Work Act 2009.'
+}
 
 function EmploymentArmour() {
   const [text, setText] = useState('')
@@ -15,8 +23,16 @@ function EmploymentArmour() {
   const handleAnalyze = () => {
     setAnalyzing(true)
     setTimeout(() => {
-      const flagged = employmentClauses.filter(clause => clause.patterns.some(p => p.test(text)))
-      setAnalysis({ flagged, score: Math.max(0, 100 - flagged.length * 25) })
+      const flagged = []
+      for (const clause of employmentClauses) {
+        for (const pattern of clause.patterns) {
+          if (pattern.test(text)) { const m = text.match(pattern); flagged.push({ ...clause, match: m ? m[0] : null }); break }
+        }
+      }
+      const highRiskCount = flagged.filter(c => c.severity === 'high').length
+      const mediumRisk = flagged.filter(c => c.severity === 'medium').length
+      const score = Math.max(0, 100 - (highRiskCount * 20) - (mediumRisk * 10))
+      setAnalysis({ flagged, score, highRiskCount, summary: `Found ${flagged.length} potentially unfair clause(s). Fairness score: ${score}/100.` })
       setAnalyzing(false)
     }, 3000)
   }
@@ -42,7 +58,7 @@ function EmploymentArmour() {
         <div className="space-y-6">
           <div className="card border-gold/30">
             <h3 className="font-heading text-sm tracking-widest text-gold mb-4">EMPLOYMENT ANALYSIS</h3>
-            <p className="text-muted-foreground mb-4">Found {analysis.flagged.length} potentially unfair clauses. Fairness score: {analysis.score}/100.</p>
+            <p className="text-muted-foreground mb-4">{analysis.summary}</p>
           </div>
           {analysis.flagged.map((clause, i) => (
             <div key={i} className="card">
@@ -55,6 +71,7 @@ function EmploymentArmour() {
               <p className="text-gold text-sm">{clause.resolution}</p>
             </div>
           ))}
+          <CertifiedCaseFile analysis={analysis} meta={CASE_META} />
         </div>
       )}
       <div className="mt-8 p-4 bg-card/50 border border-border rounded-sm">

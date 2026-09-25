@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
 import { DollarSign, AlertTriangle } from 'lucide-react'
+import CertifiedCaseFile from '../components/CertifiedCaseFile'
 
 const financeClauses = [
   { id: 'hidden-fee', name: 'HIDDEN FEE STRUCTURE', severity: 'high', patterns: [/account\s+keeping\s+fee/i, /monthly\s+service\s+fee/i, /administration\s+charge/i], aclRef: 'National Credit Code', reason: 'Hidden fees that are not clearly disclosed may breach responsible lending obligations.', resolution: 'I request a complete schedule of all fees and charges associated with this product.' },
   { id: 'rate-escalation', name: 'INTEREST RATE ESCALATION', severity: 'high', patterns: [/variable\s+rate\s+may\s+increase/i, /interest\s+rate\s+adjustment/i, /penalty\s+interest/i], aclRef: 'National Credit Code', reason: 'Unlimited interest rate escalation without caps may be unfair.', resolution: 'I request clarification on maximum possible interest rate and frequency of adjustments.' },
   { id: 'default-trigger', name: 'AGGRESSIVE DEFAULT TRIGGER', severity: 'medium', patterns: [/default\s+notice/i, /acceleration\s+clause/i, /immediate\s+repayment/i], aclRef: 'National Credit Code', reason: 'Aggressive default triggers without proper notice periods may be unlawful.', resolution: 'I request reasonable default notice periods as required by the National Credit Code.' }
 ]
+
+const CASE_META = {
+  shieldTitle: 'FINANCE',
+  lawLine: 'the National Credit Code',
+  registerUrl: 'asic.gov.au',
+  complaintIntro: 'I wish to lodge a complaint about unfair or unlawful terms in a credit or finance agreement, including undisclosed fees, uncapped interest escalation and aggressive default triggers that may breach the National Credit Code and responsible-lending obligations.'
+}
 
 function FinanceXRay() {
   const [text, setText] = useState('')
@@ -15,8 +23,16 @@ function FinanceXRay() {
   const handleAnalyze = () => {
     setAnalyzing(true)
     setTimeout(() => {
-      const flagged = financeClauses.filter(clause => clause.patterns.some(p => p.test(text)))
-      setAnalysis({ flagged, score: Math.max(0, 100 - flagged.length * 25) })
+      const flagged = []
+      for (const clause of financeClauses) {
+        for (const pattern of clause.patterns) {
+          if (pattern.test(text)) { const m = text.match(pattern); flagged.push({ ...clause, match: m ? m[0] : null }); break }
+        }
+      }
+      const highRiskCount = flagged.filter(c => c.severity === 'high').length
+      const mediumRisk = flagged.filter(c => c.severity === 'medium').length
+      const score = Math.max(0, 100 - (highRiskCount * 20) - (mediumRisk * 10))
+      setAnalysis({ flagged, score, highRiskCount, summary: `Found ${flagged.length} potentially unfair clause(s). Fairness score: ${score}/100.` })
       setAnalyzing(false)
     }, 3000)
   }
@@ -42,7 +58,7 @@ function FinanceXRay() {
         <div className="space-y-6">
           <div className="card border-gold/30">
             <h3 className="font-heading text-sm tracking-widest text-gold mb-4">FINANCIAL ANALYSIS</h3>
-            <p className="text-muted-foreground mb-4">Found {analysis.flagged.length} potentially unfair clauses. Fairness score: {analysis.score}/100.</p>
+            <p className="text-muted-foreground mb-4">{analysis.summary}</p>
           </div>
           {analysis.flagged.map((clause, i) => (
             <div key={i} className="card">
@@ -55,6 +71,7 @@ function FinanceXRay() {
               <p className="text-gold text-sm">{clause.resolution}</p>
             </div>
           ))}
+          <CertifiedCaseFile analysis={analysis} meta={CASE_META} />
         </div>
       )}
       <div className="mt-8 p-4 bg-card/50 border border-border rounded-sm">

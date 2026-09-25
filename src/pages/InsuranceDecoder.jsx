@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Shield, AlertTriangle, CheckCircle, Download } from 'lucide-react'
+import CertifiedCaseFile from '../components/CertifiedCaseFile'
 
 const insuranceClauses = [
   {
@@ -31,6 +32,13 @@ const insuranceClauses = [
   }
 ]
 
+const CASE_META = {
+  shieldTitle: 'INSURANCE',
+  lawLine: 'the Insurance Contracts Act 1984 and ASIC RG 183',
+  registerUrl: 'asic.gov.au and insuranceoombudsman.gov.au',
+  complaintIntro: 'I wish to lodge a complaint about unfair or unlawful terms in an insurance policy, including broad pre-existing-condition exclusions, disproportionate excesses and discretionary claim-denial triggers that may breach the duty of utmost good faith under the Insurance Contracts Act 1984.'
+}
+
 function InsuranceDecoder() {
   const [text, setText] = useState('')
   const [analyzing, setAnalyzing] = useState(false)
@@ -39,10 +47,16 @@ function InsuranceDecoder() {
   const handleAnalyze = () => {
     setAnalyzing(true)
     setTimeout(() => {
-      const flagged = insuranceClauses.filter(clause =>
-        clause.patterns.some(p => p.test(text))
-      )
-      setAnalysis({ flagged, score: Math.max(0, 100 - flagged.length * 25) })
+      const flagged = []
+      for (const clause of insuranceClauses) {
+        for (const pattern of clause.patterns) {
+          if (pattern.test(text)) { const m = text.match(pattern); flagged.push({ ...clause, match: m ? m[0] : null }); break }
+        }
+      }
+      const highRiskCount = flagged.filter(c => c.severity === 'high').length
+      const mediumRisk = flagged.filter(c => c.severity === 'medium').length
+      const score = Math.max(0, 100 - (highRiskCount * 20) - (mediumRisk * 10))
+      setAnalysis({ flagged, score, highRiskCount, summary: `Found ${flagged.length} potentially unfair clause(s). Fairness score: ${score}/100.` })
       setAnalyzing(false)
     }, 3000)
   }
@@ -77,7 +91,7 @@ function InsuranceDecoder() {
         <div className="space-y-6">
           <div className="card border-gold/30">
             <h3 className="font-heading text-sm tracking-widest text-gold mb-4">INSURANCE ANALYSIS</h3>
-            <p className="text-muted-foreground mb-4">Found {analysis.flagged.length} potentially unfair clauses. Fairness score: {analysis.score}/100.</p>
+            <p className="text-muted-foreground mb-4">{analysis.summary}</p>
           </div>
           {analysis.flagged.map((clause, i) => (
             <div key={i} className="card">
@@ -90,6 +104,7 @@ function InsuranceDecoder() {
               <p className="text-gold text-sm">{clause.resolution}</p>
             </div>
           ))}
+          <CertifiedCaseFile analysis={analysis} meta={CASE_META} />
         </div>
       )}
 
